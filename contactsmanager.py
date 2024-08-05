@@ -256,6 +256,13 @@ class Menu():
     Classe statica del menu principale
     - agisce su una classe "manager" di tipo ContactsManager
     - choice è un Action
+    >> Action.Exit
+    >> Action.Load
+    >> Action.Save
+    >> Action.Add
+    >> Action.Edit
+    >> Action.Delete
+    >> Action.Print
     """
     if choice == Action.Exit:
       if (manager.pending_changes):
@@ -287,88 +294,91 @@ class Menu():
       return None
 
   def _contact_editor_selector(manager, action):
-      print("Contacts search init...")
-      for i in range(10):
-        print("#-#", end =""), # print on the same line
-        sleep(1/(i + 1))
+    """
+    Metodo private per gestire Action.Edit o Action.Delete
+    """
+    print("Contacts search init...")
+    for i in range(10):
+      print("#-#", end =""), # print on the same line
+      sleep(1/(i + 1))
 
-      print("\nWhat do you want to search?")
-      print(" > " + Action.Name.name)
-      print(" > " + Action.Surname.name)
-      print(" > " + Action.Phone.name)
-      print(" > " + Action.All.name)
-      choice = input("\n >> ")
-      founds =[]
-      if (choice == Action.All.name):
-        founds = manager.get_all_contacts()
-        if (len(founds) == 0): return None
-      elif (choice == Action.Name.name):
-        name = input("Enter name: ")
-        founds = manager.get_contacts_by_name(name)
-        if (len(founds) == 0): return None
-      elif (choice == Action.Surname.name):
-        surname = input("Enter surname: ")
-        founds = manager.get_contacts_by_surname(surname)
-        if (len(founds) == 0): return None
-      elif (choice == Action.Phone.name):
-        phone = input("Enter phone number: ")
-        founds = manager.get_contacts_by_phone(phone)
-        if (len(founds) == 0): return None
-      else:
-        print("Invalid choice!")
-        return None
+    print("\nWhat do you want to search?")
+    print(" > " + Action.Name.name)
+    print(" > " + Action.Surname.name)
+    print(" > " + Action.Phone.name)
+    print(" > " + Action.All.name)
+    choice = input("\n >> ")
+    founds =[]
+    if (choice == Action.All.name):
+      founds = manager.get_all_contacts()
+      if (len(founds) == 0): return None
+    elif (choice == Action.Name.name):
+      name = input("Enter name: ")
+      founds = manager.get_contacts_by_name(name)
+      if (len(founds) == 0): return None
+    elif (choice == Action.Surname.name):
+      surname = input("Enter surname: ")
+      founds = manager.get_contacts_by_surname(surname)
+      if (len(founds) == 0): return None
+    elif (choice == Action.Phone.name):
+      phone = input("Enter phone number: ")
+      founds = manager.get_contacts_by_phone(phone)
+      if (len(founds) == 0): return None
+    else:
+      print("Invalid choice!")
+      return None
 
-      print("\nChoose contact ID")
-      sel = founds[int(input(" >> #")) - 1]
-      sel_contact = manager.get_contact(sel.name, sel.surname)
-      print(f"Selected contact: {sel_contact}\n")
-      go_on = input("Do you want to continue? [Y/n]")
-      if (go_on == "n"): return None
-      if (action.name == Action.Delete.name): # se faccio delete interrompo qui
-        if (not manager.remove_contact(sel_contact)):
-          print("Warning: unable to delete the contact.")
-        return None
+    print("\nChoose contact ID")
+    sel = founds[int(input(" >> #")) - 1]
+    sel_contact = manager.get_contact(sel.name, sel.surname)
+    print(f"Selected contact: {sel_contact}\n")
+    go_on = input("Do you want to continue? [Y/n]")
+    if (go_on == "n"): return None
+    if (action.name == Action.Delete.name): # se faccio delete interrompo qui
+      if (not manager.remove_contact(sel_contact)):
+        print("Warning: unable to delete the contact.")
+      return None
 
-      print("What do you want to edit?")
-      print(" > " + Action.Name.name)
-      print(" > " + Action.Surname.name)
-      print(" > " + Action.Phone.name)
-      print(" > " + Action.All.name)
-      choice = input("\n >> ")
-      if (choice == Action.All.name):
-        name = input("Enter new name: ")
-        surname = input("Enter new surname: ")
-        phone = input("Enter new phone number: ")
-        try:
-          new_contact = Contact(name, surname, phone)
-          manager.update_contact(sel_contact, new_contact)
-        except:
-          print("Fatal Error: something went wrong when editing the whole contact.")
-          return None
-      elif (choice == Action.Name.name):
-        name = input("Enter new name: ")
-        try:
-          manager.update_name(sel_contact, name)
-        except:
-          print("Fatal Error: something went wrong when editing the name.")
-          return None
-      elif (choice == Action.Surname.name):
-        surname = input("Enter new surname: ")
-        try:
-          manager.update_surname(sel_contact, surname)
-        except:
-          print("Fatal Error: something went wrong when editing the surname.")
-          return None
-      elif (choice == Action.Phone.name):
-        phone = input("Enter new phone number: ")
-        try:
-          manager.update_phone(sel_contact, phone)
-        except:
-          print("Fatal Error: something went wrong when editing the phone number.")
-          return None
-      else:
-        print("Invalid choice!")
+    print("What do you want to edit?")
+    print(" > " + Action.Name.name)
+    print(" > " + Action.Surname.name)
+    print(" > " + Action.Phone.name)
+    print(" > " + Action.All.name)
+    choice = input("\n >> ")
+    if (choice == Action.All.name):
+      name = input("Enter new name: ")
+      surname = input("Enter new surname: ")
+      phone = input("Enter new phone number: ")
+      try:
+        new_contact = Contact(name, surname, phone)
+        manager.update_contact(sel_contact, new_contact)
+      except:
+        print("Fatal Error: something went wrong when editing the whole contact.")
         return None
+    elif (choice == Action.Name.name):
+      name = input("Enter new name: ")
+      try:
+        manager.update_name(sel_contact, name)
+      except:
+        print("Fatal Error: something went wrong when editing the name.")
+        return None
+    elif (choice == Action.Surname.name):
+      surname = input("Enter new surname: ")
+      try:
+        manager.update_surname(sel_contact, surname)
+      except:
+        print("Fatal Error: something went wrong when editing the surname.")
+        return None
+    elif (choice == Action.Phone.name):
+      phone = input("Enter new phone number: ")
+      try:
+        manager.update_phone(sel_contact, phone)
+      except:
+        print("Fatal Error: something went wrong when editing the phone number.")
+        return None
+    else:
+      print("Invalid choice!")
+      return None
 
 """Testing menu"""
 
